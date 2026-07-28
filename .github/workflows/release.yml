@@ -51,24 +51,28 @@ jobs:
         run: |
           Compress-Archive -Path "release/TurzxThemeToolkit/*" -DestinationPath "release/TurzxThemeToolkit-${{ steps.version.outputs.version }}.zip"
 
+      - name: Extract release notes from README
+        id: notes
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $readme = Get-Content "README.md" -Raw
+          $pattern = "(?ms)### v$version.*?(?=### v|\Z)"
+          if ($readme -match $pattern) {
+            $notes = $matches[0].Trim()
+          } else {
+            $notes = "v$version"
+          }
+          # Write to file to avoid multi-line variable issues
+          Set-Content -Path "release-notes.md" -Value $notes -NoNewline
+          Write-Host "Release notes:"
+          Get-Content "release-notes.md"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: release/TurzxThemeToolkit-${{ steps.version.outputs.version }}.zip
           name: TurzxThemeToolkit v${{ steps.version.outputs.version }}
-          body: |
-            ## TurzxThemeToolkit v${{ steps.version.outputs.version }}
-
-            Extract embedded images from `.turtheme` files.
-
-            ### Download
-            - `TurzxThemeToolkit-${{ steps.version.outputs.version }}.zip` — standalone executable + README
-
-            ### Usage
-            ```
-            TurzxThemeToolkit.exe gui
-            TurzxThemeToolkit.exe extract "path\to\theme.turtheme" -o "output\dir"
-            TurzxThemeToolkit.exe list "path\to\theme.turtheme"
-            ```
+          body_path: release-notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
