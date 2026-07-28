@@ -57,7 +57,7 @@ jobs:
         run: |
           $version = "${{ steps.version.outputs.version }}"
           $readme = Get-Content "README.md" -Raw
-          $pattern = "(?ms)### v$version.*?(?=### v|\Z)"
+          $pattern = "(?ms)### v$version.*?(?=### v|^## |\Z)"
           if ($readme -match $pattern) {
             $notes = $matches[0].Trim()
           } else {
