@@ -28,3 +28,6 @@ obj/
 
 ## OS junk
 Thumbs.db
+
+## Development docs (implementation plans, reverse engineering notes)
+docs/
