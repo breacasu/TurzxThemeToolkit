@@ -1,0 +1,157 @@
+<Window x:Class="TurzxThemeToolkit.Gui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TurzxThemeToolkit - .turtheme Inspector" Height="720" Width="1000"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- File selection row -->
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="FilePathBox" Grid.Column="0"
+                     Height="28" VerticalContentAlignment="Center" Padding="4"
+                     IsReadOnly="True"
+                     Text="Click Browse to select a .turtheme file..."/>
+
+            <Button x:Name="BrowseBtn" Grid.Column="1"
+                    Content="Browse..." Click="Browse_Click"
+                    Margin="8,0,4,0" Padding="8,4"/>
+
+            <Button x:Name="ExtractBtn" Grid.Column="2"
+                    Content="Extract Images" Click="Extract_Click"
+                    IsEnabled="False" Padding="8,4"/>
+
+            <Button x:Name="SaveAsBtn" Grid.Column="3"
+                    Content="Save Selected..." Click="SaveSelected_Click"
+                    IsEnabled="False" Margin="4,0,0,0" Padding="8,4"/>
+        </Grid>
+
+        <!-- Tabs -->
+        <TabControl Grid.Row="1">
+
+            <!-- Images tab -->
+            <TabItem Header="Images">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="5*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Image list -->
+                    <GroupBox Grid.Column="0" Header="Images" Margin="0,0,5,0">
+                        <ListBox x:Name="ImageList"
+                                 SelectionChanged="ImageList_SelectionChanged"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image Grid.Column="0" Source="{Binding Thumbnail}" Width="48" Height="48"
+                                               Stretch="Uniform" Margin="0,0,8,0"/>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding Subtitle}" FontSize="11" Foreground="Gray"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </GroupBox>
+
+                    <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+
+                    <!-- Preview -->
+                    <GroupBox Grid.Column="2" Header="Preview" Margin="5,0,0,0">
+                        <Grid>
+                            <Image x:Name="PreviewImage" Stretch="Uniform" Margin="8"/>
+                            <TextBlock x:Name="PreviewPlaceholder"
+                                       Text="Select an image to preview"
+                                       Foreground="Gray" FontSize="13"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+
+            <!-- Elements tab -->
+            <TabItem Header="Elements">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Type filter -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Filter by type:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <ComboBox x:Name="ElementTypeFilter" Width="180"
+                                  SelectionChanged="ElementTypeFilter_SelectionChanged"/>
+                        <TextBlock x:Name="ElementCount" Text="" VerticalAlignment="Center"
+                                   Margin="12,0,0,0" Foreground="Gray"/>
+                    </StackPanel>
+
+                    <!-- Element list + details -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="6*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Element list -->
+                        <ListBox Grid.Column="0" x:Name="ElementList"
+                                 SelectionChanged="ElementList_SelectionChanged"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="2">
+                                        <TextBlock Text="{Binding Summary}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding DetailLine}" FontSize="11" Foreground="Gray"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+
+                        <!-- Element details -->
+                        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+                            <StackPanel x:Name="ElementDetailsPanel" Margin="4">
+                                <TextBlock x:Name="ElementDetailsPlaceholder"
+                                           Text="Select an element to inspect its properties"
+                                           Foreground="Gray" FontSize="13"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Margin="0,40,0,0"/>
+                                <Image x:Name="ElementPreviewImage" Stretch="Uniform" Margin="4,8,4,4"
+                                       MaxHeight="200" HorizontalAlignment="Center"
+                                       Visibility="Collapsed"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- Bottom status -->
+        <StatusBar Grid.Row="2" Margin="0,10,0,0">
+            <TextBlock x:Name="StatusText" Text="Ready. Select a .turtheme file to begin."/>
+            <Separator Margin="8,0"/>
+            <TextBlock x:Name="DetailText"/>
+        </StatusBar>
+    </Grid>
+</Window>

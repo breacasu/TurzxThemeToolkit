@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Extract version from tag
+        id: version
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -match 'refs/tags/v(.+)') {
+            $version = $matches[1]
+          } else {
+            $version = '0.0.0-dev'
+          }
+          "version=$version" >> $env:GITHUB_OUTPUT
+          Write-Host "Version: $version"
+
+      - name: Build
+        run: dotnet build TurzxThemeToolkit.sln -c Release -p:Version=${{ steps.version.outputs.version }}
+
+      - name: Stage release
+        shell: pwsh
+        run: |
+          $out = "release/TurzxThemeToolkit"
+          New-Item -ItemType Directory -Force -Path $out
+          Copy-Item "src/bin/Release/net48/TurzxThemeToolkit.exe" $out
+          Copy-Item "README.md" $out
+          Copy-Item "LICENSE" $out
+
+      - name: Create zip
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "release/TurzxThemeToolkit/*" -DestinationPath "release/TurzxThemeToolkit-${{ steps.version.outputs.version }}.zip"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/TurzxThemeToolkit-${{ steps.version.outputs.version }}.zip
+          name: TurzxThemeToolkit v${{ steps.version.outputs.version }}
+          body: |
+            ## TurzxThemeToolkit v${{ steps.version.outputs.version }}
+
+            Extract embedded images from `.turtheme` files.
+
+            ### Download
+            - `TurzxThemeToolkit-${{ steps.version.outputs.version }}.zip` — standalone executable + README
+
+            ### Usage
+            ```
+            TurzxThemeToolkit.exe gui
+            TurzxThemeToolkit.exe extract "path\to\theme.turtheme" -o "output\dir"
+            TurzxThemeToolkit.exe list "path\to\theme.turtheme"
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,30 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.rej
+*.rsuser
+[Dd]ebug/
+[Rr]elease/
+*.pdb
+*.manifest
+
+## Visual Studio
+.vs/
+*.sln.docstates
+
+## JetBrains Rider
+.idea/
+*.sln.iml
+
+## macOS
+.DS_Store
+
+## Build artifacts
+*.exe
+!src/bin/Release/net48/TurzxThemeToolkit.exe
+
+## OS junk
+Thumbs.db
