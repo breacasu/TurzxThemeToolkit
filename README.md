@@ -85,6 +85,10 @@ MIT — see [LICENSE](LICENSE).
 
 For technical details, build instructions, and architecture see [TECHNICAL.md](TECHNICAL.md).
 
+---
+
+**Made with ❤️ by breacasu and AI**
+
 ## Version History
 
 ### v1.0.0 (current)
@@ -96,7 +100,3 @@ For technical details, build instructions, and architecture see [TECHNICAL.md](T
 - All GraphItem subclass properties read via reflection: FontConfig (name, size, bold, color, gradient, alignment), M_Data (DataName, DisplayName, SubName, ShowUnit), position, type-specific properties (ArchBar, StatuBar, Line, Animation, Clock, Image)
 - GUI with Images tab + Elements tab (type filter, element list, property details, preview)
 - CLI commands: `extract`, `list`, `elements`, `--help`
-
----
-
-**Made with ❤️ by breacasu and AI**
